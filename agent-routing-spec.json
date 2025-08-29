@@ -1,0 +1,83 @@
+{
+  "agents": {
+    "claude": {
+      "specialty": "system_architecture_ui_artifacts",
+      "triggers": ["component", "ui", "design", "architecture", "artifact", "preview", "wireframe", "mockup"],
+      "outputs": [
+        "technical_specifications",
+        "react_components", 
+        "ui_artifacts",
+        "system_diagrams",
+        "file_operations"
+      ],
+      "handoff_to": ["nova", "copilot"],
+      "directory": "C:\\SuperChase_OpenAI-Agentic\\data\\docs\\routed\\claude\\"
+    },
+    "nova": {
+      "specialty": "research_analysis_validation",
+      "triggers": ["research", "analyze", "compare", "investigate", "alternatives", "benchmark", "validate"],
+      "outputs": [
+        "research_reports",
+        "competitive_analysis",
+        "technology_recommendations", 
+        "validation_findings"
+      ],
+      "handoff_to": ["claude", "copilot"],
+      "directory": "C:\\SuperChase_OpenAI-Agentic\\data\\docs\\routed\\nova\\"
+    },
+    "copilot": {
+      "specialty": "code_implementation_refactoring",
+      "triggers": ["implement", "code", "refactor", "debug", "optimize", "deploy", "build"],
+      "outputs": [
+        "working_code",
+        "refactored_files",
+        "deployment_scripts",
+        "test_implementations"
+      ],
+      "handoff_to": ["claude"],
+      "directory": "C:\\SuperChase_OpenAI-Agentic\\data\\docs\\routed\\copilot\\"
+    }
+  },
+  
+  "routing_logic": {
+    "priority_keywords": {
+      "urgent": "high",
+      "critical": "high", 
+      "asap": "high",
+      "quick": "medium",
+      "when_possible": "low",
+      "someday": "low"
+    },
+    
+    "workflow_patterns": {
+      "full_feature": ["nova", "claude", "copilot"],
+      "architecture_only": ["claude"],
+      "research_then_build": ["nova", "claude"],
+      "quick_implementation": ["copilot", "claude"],
+      "ui_design": ["claude", "nova"]
+    },
+    
+    "auto_routing": {
+      "contains_multiple_triggers": "determine_primary_agent_then_chain",
+      "single_clear_trigger": "direct_route",
+      "ambiguous": "default_to_claude_with_reasoning"
+    }
+  },
+  
+  "output_standards": {
+    "filename_format": "{timestamp}_{agent}_{task_hash}.md",
+    "required_sections": [
+      "# Task Assignment",
+      "# Agent Reasoning", 
+      "# Output",
+      "# Next Steps",
+      "# Handoff Instructions"
+    ],
+    "metadata_required": [
+      "priority_level",
+      "estimated_completion",
+      "dependencies",
+      "human_review_needed"
+    ]
+  }
+}

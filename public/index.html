@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperChase Task Capture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .status-cloud {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-local {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .deliverables {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .checkbox-group:hover {
+            background: #e9ecef;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .priority-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .priority-btn {
+            flex: 1;
+            padding: 8px 16px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .priority-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .priority-btn.high.active {
+            border-color: #dc3545;
+            background: #dc3545;
+        }
+        
+        .priority-btn.low.active {
+            border-color: #28a745;
+            background: #28a745;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 14px;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .quick-examples {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+        
+        .example {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .example:hover {
+            background: #e9ecef;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .example-desc {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SuperChase</h1>
+        <p class="subtitle">Intelligent Task Capture & Automation</p>
+        
+        <div id="statusIndicator" class="status-indicator">
+            Detecting environment...
+        </div>
+        
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="goal">Task Goal</label>
+                <textarea id="goal" placeholder="What needs to be done? e.g., 'Follow up with client about proposal status'" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Deliverables</label>
+                <div class="deliverables">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="email" value="email draft" checked>
+                        <label for="email">Email Draft</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="calendar" value="calendar event">
+                        <label for="calendar">Calendar Event</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="analysis" value="analysis">
+                        <label for="analysis">Analysis</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email_to">Email To (if applicable)</label>
+                <input type="email" id="email_to" placeholder="client@example.com" value="me@chasepierson.tv">
+            </div>
+            
+            <div class="form-group">
+                <label>Priority</label>
+                <div class="priority-buttons">
+                    <button type="button" class="priority-btn high" data-priority="high">High</button>
+                    <button type="button" class="priority-btn medium active" data-priority="medium">Medium</button>
+                    <button type="button" class="priority-btn low" data-priority="low">Low</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="constraints">Constraints (optional)</label>
+                <input type="text" id="constraints" placeholder="e.g., tone: casual, keep brief">
+            </div>
+            
+            <button type="submit" class="submit-btn">Send to SuperChase</button>
+        </form>
+        
+        <div id="result"></div>
+        
+        <div class="quick-examples">
+            <h3>Quick Examples</h3>
+            <div class="example" onclick="fillExample('Follow up with Utopia about the reel selects from last week', ['email draft'], 'high')">
+                <div class="example-title">Client Follow-up</div>
+                <div class="example-desc">Follow up with Utopia about the reel selects from last week</div>
+            </div>
+            <div class="example" onclick="fillExample('Schedule design review meeting for Ardent project', ['calendar event'], 'medium')">
+                <div class="example-title">Meeting Scheduling</div>
+                <div class="example-desc">Schedule design review meeting for Ardent project</div>
+            </div>
+            <div class="example" onclick="fillExample('Research competitor pricing for video production services', ['analysis'], 'low')">
+                <div class="example-title">Research Task</div>
+                <div class="example-desc">Research competitor pricing for video production services</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-detect environment and set endpoint
+        let ENDPOINT = '/api/intake';
+        let isCloudEnvironment = false;
+        
+        // Check if we're in a cloud environment
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            isCloudEnvironment = true;
+            ENDPOINT = '/api/intake'; // Relative URL works in cloud
+        } else {
+            ENDPOINT = 'http://localhost:3000/api/intake'; // Localhost for development
+        }
+        
+        // Update status indicator
+        const statusIndicator = document.getElementById('statusIndicator');
+        if (isCloudEnvironment) {
+            statusIndicator.className = 'status-indicator status-cloud';
+            statusIndicator.textContent = '☁️ Cloud Deployment';
+        } else {
+            statusIndicator.className = 'status-indicator status-local';
+            statusIndicator.textContent = '🏠 Local Development';
+        }
+        
+        let currentPriority = 'medium';
+        
+        // Priority button handling
+        document.querySelectorAll('.priority-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentPriority = btn.dataset.priority;
+            });
+        });
+        
+        // Form submission
+        document.getElementById('taskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const goal = document.getElementById('goal').value.trim();
+            if (!goal) return;
+            
+            // Get selected deliverables
+            const deliverables = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+            
+            if (deliverables.length === 0) {
+                deliverables.push('analysis'); // Default
+            }
+            
+            // Build constraints array
+            const constraints = [];
+            const constraintText = document.getElementById('constraints').value.trim();
+            if (constraintText) {
+                constraints.push(...constraintText.split(',').map(c => c.trim()));
+            }
+            constraints.push('tone: professional'); // Always add this
+            
+            const payload = {
+                id: `FORM_${Date.now()}`,
+                goal: goal,
+                deliverables: deliverables,
+                email_to: document.getElementById('email_to').value.trim() || undefined,
+                priority: currentPriority,
+                constraints: constraints
+            };
+            
+            // Add calendar times if calendar event is selected
+            if (deliverables.includes('calendar event')) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(14, 0, 0, 0);
+                
+                const end = new Date(tomorrow);
+                end.setHours(15, 0, 0, 0);
+                
+                payload.calendar_start = tomorrow.toISOString();
+                payload.calendar_end = end.toISOString();
+            }
+            
+            // Submit to SuperChase
+            const submitBtn = document.querySelector('.submit-btn');
+            const resultDiv = document.getElementById('result');
+            
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch(ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Task Queued Successfully</strong><br>
+                        <strong>ID:</strong> ${result.taskId}<br>
+                        <strong>Agent:</strong> ${result.routing.primaryAgent}<br>
+                        <strong>ETA:</strong> ${result.estimatedCompletion}<br>
+                        <strong>Deliverables:</strong> ${result.deliverables.join(', ')}<br>
+                        <strong>Confidence:</strong> ${Math.round(result.routing.confidence * 100)}%
+                    `;
+                    
+                    // Reset form
+                    document.getElementById('goal').value = '';
+                    document.getElementById('constraints').value = '';
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `<strong>❌ Error:</strong> ${result.error || 'Unknown error'}`;
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>❌ Network Error:</strong> ${error.message}<br>
+                    <em>Check server connection</em>`;
+            }
+            
+            submitBtn.textContent = 'Send to SuperChase';
+            submitBtn.disabled = false;
+        });
+        
+        // Quick example filling
+        function fillExample(goal, deliverables, priority) {
+            document.getElementById('goal').value = goal;
+            
+            // Clear all checkboxes first
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            
+            // Check the specified deliverables
+            deliverables.forEach(deliverable => {
+                const checkbox = document.querySelector(`input[value="${deliverable}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+            
+            // Set priority
+            document.querySelectorAll('.priority-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-priority="${priority}"]`).classList.add('active');
+            currentPriority = priority;
+        }
+        
+        // Auto-adjust deliverables based on goal content
+        document.getElementById('goal').addEventListener('input', (e) => {
+            const goal = e.target.value.toLowerCase();
+            
+            // Auto-check email if goal mentions email/follow-up
+            const emailCheckbox = document.getElementById('email');
+            if ((goal.includes('email') || goal.includes('follow up') || goal.includes('contact') || goal.includes('message')) && !emailCheckbox.checked) {
+                emailCheckbox.checked = true;
+            }
+            
+            // Auto-check calendar if goal mentions meeting/schedule
+            const calendarCheckbox = document.getElementById('calendar');
+            if ((goal.includes('meeting') || goal.includes('schedule') || goal.includes('call')) && !calendarCheckbox.checked) {
+                calendarCheckbox.checked = true;
+            }
+        });
+    </script>
+</body>
+</html>
