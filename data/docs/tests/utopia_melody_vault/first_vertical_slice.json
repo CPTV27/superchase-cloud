@@ -1,0 +1,7 @@
+{
+  "title": "First Vertical Slice",
+  "project": "Studio C — Melody Vault",
+  "content": "Detail endpoints, tables, and tasks required to deliver the first usable flow for Melody Vault.",
+  "labels": ["vertical-slice", "flow"],
+  "priority": "normal"
+}

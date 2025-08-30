@@ -1,0 +1,2 @@
+CRON: 0 14 * * 1,4
+TASK: claude_digest

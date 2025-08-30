@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melody Vault Auth System - Live Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .tab-active {
+            background: rgba(102, 126, 234, 0.2);
+            border-bottom: 2px solid #667eea;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-6xl mx-auto">
+        
+        <!-- Preview Controls -->
+        <div class="glass rounded-lg p-4 mb-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold">Melody Vault Auth System</h1>
+                    <p class="text-sm opacity-75">Live Component Preview - Claude Agent Output</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="showView('login')" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition-all">Login</button>
+                    <button onclick="showView('dashboard')" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition-all">Dashboard</button>
+                    <button onclick="showView('profile')" class="px-4 py-2 rounded bg-white/10 hover:bg-white/20 transition-all">Profile</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Login View -->
+        <div id="login-view" class="view-container">
+            <div class="flex min-h-screen bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500">
+                <div class="flex-1 flex items-center justify-center p-8">
+                    <div class="glass rounded-2xl p-8 w-full max-w-md slide-in">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v6.114a4 4 0 10.114 7.886 4 4 0 003.886-3.114V6.82l8-1.6v4.894a4 4 0 11-.114 7.886A4 4 0 0018 14V3z"/>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-bold text-white">Welcome to Melody Vault</h2>
+                            <p class="text-white/70 mt-2">Sign in to access your music collection</p>
+                        </div>
+                        
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Email</label>
+                                <input type="email" class="form-input w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none transition-all" placeholder="your@email.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-white mb-2">Password</label>
+                                <input type="password" class="form-input w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none transition-all" placeholder="••••••••">
+                            </div>
+                            
+                            <div class="flex items-center justify-between text-sm">
+                                <label class="flex items-center text-white/70">
+                                    <input type="checkbox" class="rounded border-white/20 text-indigo-600 focus:ring-indigo-500">
+                                    <span class="ml-2">Remember me</span>
+                                </label>
+                                <a href="#" class="text-white hover:underline">Forgot password?</a>
+                            </div>
+                            
+                            <button type="button" onclick="showView('dashboard')" class="btn-primary w-full py-3 px-4 rounded-lg text-white font-medium">
+                                Sign In
+                            </button>
+                        </form>
+                        
+                        <div class="mt-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-white/20"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-2 bg-transparent text-white/70">Or continue with</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-3 gap-3">
+                                <button class="w-full inline-flex justify-center py-2 px-4 rounded-lg bg-white/10 hover:bg-white/20 transition-all">
+                                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                    </svg>
+                                </button>
+                                <button class="w-full inline-flex justify-center py-2 px-4 rounded-lg bg-white/10 hover:bg-white/20 transition-all">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
+                                    </svg>
+                                </button>
+                                <button class="w-full inline-flex justify-center py-2 px-4 rounded-lg bg-white/10 hover:bg-white/20 transition-all">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="mt-6 text-center text-sm text-white/70">
+                            Don't have an account? <a href="#" class="text-white hover:underline">Sign up</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view-container hidden">
+            <div class="min-h-screen bg-gray-50">
+                <nav class="bg-white shadow-sm border-b">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between h-16">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v6.114a4 4 0 10.114 7.886 4 4 0 003.886-3.114V6.82l8-1.6v4.894a4 4 0 11-.114 7.886A4 4 0 0018 14V3z"/>
+                                    </svg>
+                                </div>
+                                <span class="ml-2 text-xl font-bold text-gray-900">Melody Vault</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button class="p-2 rounded-lg hover:bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5-5-5 5h5v0zM15 17l-3 3-3-3"/>
+                                    </svg>
+                                </button>
+                                <button onclick="showView('profile')" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100">
+                                    <div class="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                        JD
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                
+                <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                    <div class="px-4 py-6 sm:px-0">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <div class="flex items-center">
+                                    <div class="p-2 bg-indigo-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-medium text-gray-500">Total Songs</p>
+                                        <p class="text-2xl font-semibold text-gray-900">1,247</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <div class="flex items-center">
+                                    <div class="p-2 bg-green-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-medium text-gray-500">Hours Played</p>
+                                        <p class="text-2xl font-semibold text-gray-900">89.5</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <div class="flex items-center">
+                                    <div class="p-2 bg-purple-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-medium text-gray-500">Favorites</p>
+                                        <p class="text-2xl font-semibold text-gray-900">43</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white shadow rounded-lg">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Recently Played</h3>
+                            </div>
+                            <div class="px-6 py-4">
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-pink-400 to-red-400 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-gray-900">Bohemian Rhapsody</p>
+                                            <p class="text-sm text-gray-500">Queen</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">5:55</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-gray-900">Stairway to Heaven</p>
+                                            <p class="text-sm text-gray-500">Led Zeppelin</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">8:02</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                        <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-gray-900">Hotel California</p>
+                                            <p class="text-sm text-gray-500">Eagles</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">6:30</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile View -->
+        <div id="profile-view" class="view-container hidden">
+            <div class="min-h-screen bg-gray-50">
+                <nav class="bg-white shadow-sm border-b">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between h-16">
+                            <div class="flex items-center">
+                                <button onclick="showView('dashboard')" class="mr-4 p-2 rounded-lg hover:bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                    </svg>
+                                </button>
+                                <span class="text-xl font-bold text-gray-900">Profile Settings</span>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                
+                <div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+                    <div class="px-4 py-6 sm:px-0">
+                        <div class="bg-white shadow rounded-lg">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-20 h-20 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-2xl font-medium">
+                                        JD
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-semibold text-gray-900">John Doe</h3>
+                                        <p class="text-gray-500">john.doe@example.com</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="px-6 py-4">
+                                <form class="space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                            <input type="text" value="John" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                            <input type="text" value="Doe" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                        <input type="email" value="john.doe@example.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Music Preferences</label>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">Rock</span>
+                                            <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">Jazz</span>
+                                            <span class="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-sm">Classical</span>
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Electronic</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex justify-end space-x-4">
+                                        <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                            Cancel
+                                        </button>
+                                        <button type="button" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view-container').forEach(view => {
+                view.classList.add('hidden');
+            });
+            
+            // Show selected view
+            document.getElementById(viewName + '-view').classList.remove('hidden');
+        }
+        
+        // Initialize with login view
+        showView('login');
+    </script>
+</body>
+</html>

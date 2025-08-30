@@ -1,0 +1,7 @@
+{
+  "title": "Product Requirements Document (PRD)",
+  "project": "Studio C — Melody Vault",
+  "content": "Define what Melody Vault is, why it exists, and who it serves. Include core value proposition, target users, and key use cases.",
+  "labels": ["prd", "requirements"],
+  "priority": "normal"
+}

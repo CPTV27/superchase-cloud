@@ -1,0 +1,13 @@
+{
+  "task_id": "sample_smoke_test",
+  "title": "SuperChase smoke test: write a routed file",
+  "created_at": "2025-08-29T00:00:00Z",
+  "priority": "low",
+  "mode": "write_file",
+  "output_path": "./data/docs/routed/smoke_test_output.md",
+  "output_content": "# SuperChase Smoke Test\n\nIf you can read this, your orchestrator routed a brief and wrote a file.\n\n- Task: sample_smoke_test\n- Timestamp: ${ISO_TIMESTAMP}\n",
+  "metadata": {
+    "requested_by": "QA",
+    "labels": ["smoke", "healthcheck"]
+  }
+}

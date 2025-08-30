@@ -1,0 +1,19 @@
+{
+  "kind": "plan",
+  "payload": {
+    "project": "Band3_StoryDrivenClip",
+    "artist": "The Midnight Ramblers",
+    "goals": [
+      "Tell a gritty backstory",
+      "Highlight dialogue moments",
+      "Make a cinematic IG Reel"
+    ],
+    "chosen_director": "Lucas Reid",
+    "chosen_producer": "Lila Foster",
+    "style": "Epic Tale",
+    "constraints": {
+      "budget": "high",
+      "security_mode": "LOCAL_ONLY"
+    }
+  }
+}
