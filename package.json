@@ -1,12 +1,21 @@
 {
-  "name": "superchase-openai-agentic",
+  "name": "superchase-central-command",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
+  },
+  "description": "SuperChase Central Command - AI Task Orchestration",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "dotenv-cli": "^10.0.0",
-    "nodemailer": "^7.0.5",
-    "openai": "^5.16.0"
+    "express": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

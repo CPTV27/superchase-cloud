@@ -1,7 +1,0 @@
-{
-  "title": "Auth & RBAC Plan",
-  "project": "Studio C — Melody Vault",
-  "content": "Define authentication flows, RBAC matrix, and integration points for Melody Vault. Specify user roles, permissions, and external auth providers.",
-  "labels": ["security", "auth"],
-  "priority": "normal"
-}

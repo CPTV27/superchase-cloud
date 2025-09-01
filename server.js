@@ -4,13 +4,19 @@
  * SuperChase Enhanced Multi-Agent Coordinator - Cloud Ready
  * Native task intake with Gmail/Calendar automation
  * Replaces external webhook services with intelligent routing
+ * Integrated with Central Command (Airtable) for task orchestration
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const express = require('express');
-const cors = require('cors');
-const os = require('os');
+import fs from 'fs/promises';
+import path from 'path';
+import express from 'express';
+import cors from 'cors';
+import os from 'os';
+import dotenv from 'dotenv';
+import CentralCommandPoller from './central-command-poller.js';
+
+// Load environment variables
+dotenv.config();
 
 class SuperChaseCoordinator {
   constructor() {
@@ -50,7 +56,7 @@ class SuperChaseCoordinator {
     this.app.use(express.json({ limit: '10mb' }));
     
     // Serve static files (web form)
-    this.app.use(express.static(path.join(__dirname, 'public')));
+    this.app.use(express.static(path.join(process.cwd(), 'public')));
     
     // Health check for cloud platforms
     this.app.get('/health', (req, res) => {
@@ -85,6 +91,11 @@ class SuperChaseCoordinator {
       res.json(this.getSystemStatus());
     });
 
+    // Dashboard data endpoint
+    this.app.get('/api/dashboard', (req, res) => {
+      res.json(this.getDashboardData());
+    });
+
     // Recent outputs
     this.app.get('/api/outputs', async (req, res) => {
       const outputs = await this.getRecentOutputs(req.query.limit || 10);
@@ -97,6 +108,7 @@ class SuperChaseCoordinator {
         name: 'SuperChase Multi-Agent Coordinator',
         version: '1.0.0',
         status: 'operational',
+        centralCommand: process.env.AIRTABLE_API_TOKEN && process.env.AIRTABLE_BASE_ID ? 'enabled' : 'disabled',
         endpoints: {
           intake: '/api/intake',
           status: '/api/status',
@@ -128,7 +140,8 @@ class SuperChaseCoordinator {
       routing: routing,
       status: 'processing',
       created: new Date(),
-      outputs: []
+      outputs: [],
+      source: taskData.system_target ? 'central_command' : 'direct_api'
     };
 
     // Add to history and queue
@@ -145,7 +158,8 @@ class SuperChaseCoordinator {
       routing: routing,
       status: task.status,
       estimatedCompletion: this.estimateCompletion(task),
-      deliverables: task.deliverables
+      deliverables: task.deliverables,
+      source: task.source
     };
   }
 
@@ -444,6 +458,7 @@ class SuperChaseCoordinator {
 **Agent**: ${agent.toUpperCase()}
 **Priority**: ${task.priority}
 **Created**: ${task.created.toISOString()}
+**Source**: ${task.source || 'direct_api'}
 
 # Agent Reasoning
 ${content.reasoning || 'Standard task processing'}
@@ -492,6 +507,7 @@ ${content.handoff || 'Standard completion protocol'}
 **Priority**: ${task.priority}
 **Agent**: ${task.routing.primaryAgent}
 **Status**: ${task.status}
+**Source**: ${task.source || 'direct_api'}
 **Deliverables**: ${task.deliverables.join(', ')}
 
 ${task.error ? `**Error**: ${task.error}` : ''}
@@ -519,6 +535,46 @@ ${task.error ? `**Error**: ${task.error}` : ''}
     return `${agentTime + deliverableTime} minutes`;
   }
 
+  getDashboardData() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const completedToday = this.taskHistory.filter(t => 
+      t.status === 'completed' && new Date(t.created) >= today
+    ).length;
+    
+    const totalCompleted = this.taskHistory.filter(t => t.status === 'completed').length;
+    const totalTasks = this.taskHistory.length;
+    const successRate = totalTasks > 0 ? Math.round((totalCompleted / totalTasks) * 100) : 100;
+    
+    // Calculate time saved (estimate 2 hours per completed task)
+    const timeSaved = totalCompleted * 2;
+    
+    // Central Command metrics
+    const centralCommandTasks = this.taskHistory.filter(t => t.source === 'central_command').length;
+    
+    return {
+      metrics: {
+        activeTasks: this.taskHistory.filter(t => t.status === 'processing').length,
+        completedToday: completedToday,
+        successRate: successRate,
+        timeSaved: timeSaved,
+        centralCommandTasks: centralCommandTasks
+      },
+      recentActivity: this.taskHistory
+        .sort((a, b) => new Date(b.created) - new Date(a.created))
+        .slice(0, 4)
+        .map(task => ({
+          title: task.goal.length > 50 ? task.goal.substring(0, 50) + '...' : task.goal,
+          description: `${task.routing.primaryAgent.charAt(0).toUpperCase() + task.routing.primaryAgent.slice(1)} agent ${task.status}. Source: ${task.source || 'direct'}`,
+          status: task.status.charAt(0).toUpperCase() + task.status.slice(1)
+        })),
+      agents: Object.entries(this.agents).map(([name, data]) => ({
+        name: name.charAt(0).toUpperCase() + name.slice(1) + ' Agent',
+        status: data.active ? (data.queue.length > 0 ? 'Processing' : 'Online') : 'Offline'
+      }))
+    };
+  }
+
   getSystemStatus() {
     return {
       agents: this.agents,
@@ -526,6 +582,7 @@ ${task.error ? `**Error**: ${task.error}` : ''}
       completedTasks: this.taskHistory.filter(t => t.status === 'completed').length,
       failedTasks: this.taskHistory.filter(t => t.status === 'failed').length,
       totalTasks: this.taskHistory.length,
+      centralCommandEnabled: process.env.AIRTABLE_API_TOKEN && process.env.AIRTABLE_BASE_ID ? true : false,
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
       platform: os.platform(),
@@ -564,8 +621,30 @@ ${task.error ? `**Error**: ${task.error}` : ''}
     this.app.listen(port, '0.0.0.0', () => {
       console.log(`🚀 SuperChase Coordinator running on port ${port}`);
       console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🔗 Intake endpoint: ${process.env.NODE_ENV === 'production' ? 'https://your-app.railway.app' : 'http://localhost:' + port}/api/intake`);
-      console.log(`📊 Health check: ${process.env.NODE_ENV === 'production' ? 'https://your-app.railway.app' : 'http://localhost:' + port}/health`);
+      console.log(`🔗 Intake endpoint: ${process.env.NODE_ENV === 'production' ? 'https://superchase-cloud-production.up.railway.app' : 'http://localhost:' + port}/api/intake`);
+      console.log(`📊 Health check: ${process.env.NODE_ENV === 'production' ? 'https://superchase-cloud-production.up.railway.app' : 'http://localhost:' + port}/health`);
+      
+      // Initialize Central Command integration
+      if (process.env.AIRTABLE_API_TOKEN && process.env.AIRTABLE_BASE_ID) {
+        try {
+          const poller = new CentralCommandPoller({
+            airtableToken: process.env.AIRTABLE_API_TOKEN,
+            baseId: process.env.AIRTABLE_BASE_ID,
+            pollInterval: 30000,
+            coordinator: this // Pass SuperChase instance to poller
+          });
+          
+          poller.startPolling();
+          console.log(`🎯 Central Command integration enabled`);
+          console.log(`🔄 Monitoring Airtable Work Queue every 30 seconds`);
+          console.log(`📋 Base ID: ${process.env.AIRTABLE_BASE_ID.substring(0, 8)}...`);
+        } catch (error) {
+          console.error(`❌ Central Command integration failed:`, error.message);
+        }
+      } else {
+        console.log(`⚠️  Central Command disabled - missing Airtable credentials`);
+        console.log(`   Set AIRTABLE_API_TOKEN and AIRTABLE_BASE_ID in .env to enable`);
+      }
     });
   }
 }
@@ -593,6 +672,10 @@ Usage:
 Cloud Deployment:
   Automatically detects cloud environment via NODE_ENV=production
   Uses PORT environment variable for cloud platforms
+  
+Central Command Integration:
+  Set AIRTABLE_API_TOKEN and AIRTABLE_BASE_ID environment variables
+  Automatically polls Airtable Work Queue for new tasks
   
 Examples:
   node server.js --server
@@ -626,8 +709,9 @@ Examples:
   }
 }
 
-if (require.main === module) {
+// Only run main if this is the main module
+if (import.meta.url === new URL(process.argv[1], 'file:').href) {
   main().catch(console.error);
 }
 
-module.exports = SuperChaseCoordinator;
+export default SuperChaseCoordinator;

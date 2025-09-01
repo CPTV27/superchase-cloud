@@ -1,7 +1,0 @@
-{
-  "title": "Storage Strategy & Costs",
-  "project": "Studio C — Melody Vault",
-  "content": "Outline storage architecture, cost projections, and scaling plan for Melody Vault. Include cloud options, redundancy, and backup policies.",
-  "labels": ["architecture", "storage"],
-  "priority": "normal"
-}

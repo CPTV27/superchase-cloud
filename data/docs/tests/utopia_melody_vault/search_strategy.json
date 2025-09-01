@@ -1,7 +1,0 @@
-{
-  "title": "Search Strategy",
-  "project": "Studio C — Melody Vault",
-  "content": "Describe search architecture, indexing, and tagging strategy for Melody Vault. Include full-text, faceted, and metadata search requirements.",
-  "labels": ["search", "architecture"],
-  "priority": "normal"
-}
